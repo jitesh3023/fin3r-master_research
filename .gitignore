@@ -1,0 +1,14 @@
+# datasets
+datasets/
+**/datasets/
+
+# python cache
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# MASt3R checkpoints / retrieval files
+mast3r/checkpoints/
+Fin3R/checkpoints/
+*.pth
+*.pkl
