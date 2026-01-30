@@ -1,0 +1,35 @@
+======================================================================
+SLAM TRAJECTORY EVALUATION RESULTS
+======================================================================
+
+ABSOLUTE TRAJECTORY ERROR (ATE)
+----------------------------------------------------------------------
+  RMSE:              533.946026 m
+  Mean Error:        481.910120 m
+  Median Error:      447.123083 m
+  Std Deviation:     229.915190 m
+  Min Error:         0.000000 m
+  Max Error:         826.142922 m
+
+RELATIVE POSE ERROR (RPE)
+----------------------------------------------------------------------
+  Translation RMSE:  488.339559 m
+  Translation Mean:  366.806528 m
+  Translation Med:   266.460846 m
+  Translation Std:   322.379429 m
+  Rotation:          N/A (identity quaternions)
+
+DRIFT ANALYSIS
+----------------------------------------------------------------------
+  Drift per meter:   1111.094664 m/m
+  Drift percentage:  111109.4664%
+  Drift per second:  0.413542 m/s
+  Total distance:    0.50 m
+  Total time:        1354.34 s
+  Final error:       560.0761 m
+
+LOOP CLOSURE ANALYSIS
+----------------------------------------------------------------------
+  No loop closures detected
+
+======================================================================
