@@ -22,7 +22,6 @@ from calibration_results import scenename_to_calibration
 
 
 def load_lidar_points(lidar_path: Path) -> np.ndarray:
-    """Load LiDAR point cloud from text file (expects at least x y z per line)."""
     pts = []
     with open(lidar_path, 'r') as f:
         for line in f:
@@ -43,9 +42,6 @@ def _as_vec3(flat3) -> np.ndarray:
 
 
 def _infer_scene_name_from_folder(scene_folder_name: str) -> str:
-    """
-    scene folder example: 'interval5_AMtown01' -> 'AMtown01'
-    """
     if "_" in scene_folder_name:
         return scene_folder_name.split("_", 1)[1]
     return scene_folder_name

@@ -1,5 +1,3 @@
-# Phase 1: 3D Reconstruction Comparison
-
 import sys
 import os
 import torch
@@ -19,6 +17,22 @@ from vggt.models.renorm_lora import get_renormalized_peft_model
 from peft import LoraConfig
 
 
+import json
+
+def load_uav_single_image(dataset_path, scene="interval5_AMtown01", idx=1000):
+    scene_path = Path(dataset_path) / scene
+    metadata_path = scene_path / "sampleinfos_interpolated.json"
+
+    with open(metadata_path, "r") as f:
+        metadata = json.load(f)
+
+    frame = metadata[idx]
+    img_path = scene_path / "interval5_CAM" / frame["OriginalImageName"]
+
+    print(f"Loading image (idx={idx}): {frame['OriginalImageName']}")
+    images = load_images([str(img_path)], size=512)
+    return images, frame, img_path
+
 def load_mast3r_model(checkpoint_path, device='cuda'):
     model = AsymmetricMASt3R.from_pretrained(checkpoint_path).to(device)
     model.eval()
@@ -35,9 +49,6 @@ def apply_fin3r_lora(model, lora_path, device='cuda'):
 
 
 def extract_point_cloud(output, images, conf_threshold=1.0):
-    """
-    Extract colored 3D point cloud from MASt3R output
-    """
     # Get 3D points and confidence
     pts3d = output['pred1']['pts3d'].squeeze().cpu().numpy()  # H x W x 3
     conf = output['pred1']['conf'].squeeze().cpu().numpy()    # H x W
@@ -64,9 +75,8 @@ def extract_point_cloud(output, images, conf_threshold=1.0):
 
 def visualize_3d_comparison(vanilla_pts, vanilla_colors, fin3r_pts, fin3r_colors, 
                             vanilla_img, save_dir):
-    """Create 3D point cloud comparison visualization"""
     
-    print("\n=== Creating 3D Visualizations ===")
+    print("\n Creating 3D Visualizations ")
     
     # Figure 1: Side-by-side 3D views
     fig = plt.figure(figsize=(20, 8))
@@ -149,12 +159,11 @@ def visualize_3d_comparison(vanilla_pts, vanilla_colors, fin3r_pts, fin3r_colors
     
     plt.tight_layout()
     plt.savefig(f"{save_dir}/3d_reconstruction_topview.png", dpi=150, bbox_inches='tight')
-    print(f"✓ Saved to {save_dir}/3d_reconstruction_topview.png")
+    print(f" Saved to {save_dir}/3d_reconstruction_topview.png")
     plt.close()
 
 
 def set_axes_equal(ax):
-    """Set 3D plot axes to equal scale"""
     limits = np.array([
         ax.get_xlim3d(),
         ax.get_ylim3d(),
@@ -168,7 +177,6 @@ def set_axes_equal(ax):
 
 
 def save_ply(filename, points, colors):
-    """Save point cloud as PLY file for viewing in external tools"""
     with open(filename, 'w') as f:
         f.write("ply\n")
         f.write("format ascii 1.0\n")
@@ -185,12 +193,11 @@ def save_ply(filename, points, colors):
             r, g, b = (col * 255).astype(np.uint8)
             f.write(f"{pt[0]} {pt[1]} {pt[2]} {r} {g} {b}\n")
     
-    print(f"✓ Saved PLY to {filename}")
+    print(f" Saved PLY to {filename}")
 
 
 def compute_reconstruction_metrics(vanilla_pts, fin3r_pts):
-    """Compute metrics comparing reconstructions"""
-    print("\n=== 3D Reconstruction Metrics ===")
+    print("\n 3D Reconstruction Metrics ")
     
     # Point density
     v_density = len(vanilla_pts)
@@ -231,15 +238,13 @@ def compute_reconstruction_metrics(vanilla_pts, fin3r_pts):
     print(f"  Fin3R:   {f_smoothness:.4f}")
     
     if f_smoothness < v_smoothness:
-        print(f"  → Fin3R is {100*(v_smoothness-f_smoothness)/v_smoothness:.1f}% smoother")
+        print(f"  Fin3R is {100*(v_smoothness-f_smoothness)/v_smoothness:.1f}% smoother")
     else:
-        print(f"  → Vanilla is {100*(f_smoothness-v_smoothness)/v_smoothness:.1f}% smoother")
+        print(f"  Vanilla is {100*(f_smoothness-v_smoothness)/v_smoothness:.1f}% smoother")
 
 
 def main():
-    print("=" * 70)
     print("Phase 1: 3D Reconstruction Comparison")
-    print("=" * 70)
     
     DATASET_PATH = "/media/jitesh/Extreme SSD/fin3r-mast3r_analysis/datasets/UAVScenes/interval5_CAM_LIDAR"
     MAST3R_CKPT = "mast3r/checkpoints/MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric.pth"
@@ -250,11 +255,13 @@ def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     # Load image
-    scene_path = Path(DATASET_PATH) / "interval5_AMtown01" / "interval5_CAM"
-    img_path = list(scene_path.glob("*.jpg"))[1000]
+    # scene_path = Path(DATASET_PATH) / "interval5_AMtown01" / "interval5_CAM"
+    # img_path = list(scene_path.glob("*.jpg"))[1000]
     
-    print(f"\nLoading image: {img_path.name}")
-    images = load_images([str(img_path)], size=512)
+    # print(f"\nLoading image: {img_path.name}")
+    # images = load_images([str(img_path)], size=512)
+    images, frame, img_path = load_uav_single_image(DATASET_PATH, scene="interval5_AMtown01", idx=1000)
+
     
     # Vanilla MASt3R
     print("\n" + "=" * 70)
