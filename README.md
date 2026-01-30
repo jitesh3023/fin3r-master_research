@@ -2,8 +2,8 @@ This repository contains the full codebase, experiments, and evaluation pipeline
 
 The goal of this work was to understand whether Fin3R’s improved monocular geometry and reconstruction quality translates into better SLAM performance on aerial datasets.
 
-📄 Main Documentation
-
+**Main Documentation
+**
 Research_Documentation.pdf is the primary and final reference for this project.
 
 It includes:
@@ -18,10 +18,10 @@ Visualizations, results, and final conclusions
 
 References to all scripts and commands used
 
-👉 All findings and interpretations are documented there.
+All findings and interpretations are documented there.
 
-📁 Outputs
-
+**Outputs
+**
 For convenience, all important plots, metrics, and aligned trajectories have been copied into the Outputs/ folder for quick access.
 
 The explanation of these results remains in Research_Documentation.pdf.
